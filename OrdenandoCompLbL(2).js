@@ -7,17 +7,17 @@ const rl = readline.createInterface({
     output: process.stdout
 });
 
-// Lê o arquivo de entrada e processa os dados
-const dadosJson = [];
-
-const arquivo = readline.createInterface({
-    input: fs.createReadStream('Song1LineByLine.txt'),
-    output: process.stdout,
-    terminal: false
-});
-
 // Função para processar o arquivo e filtrar os dados por "arq"
 const processarArquivo = (arqSelecionado) => {
+    const dadosJson = [];
+
+    // Criação da interface para ler o arquivo linha por linha
+    const arquivo = readline.createInterface({
+        input: fs.createReadStream('Song1LineByLine.txt'),
+        output: process.stdout,
+        terminal: false
+    });
+
     // Processa o arquivo linha por linha
     arquivo.on('line', (linha) => {
         try {
@@ -35,23 +35,29 @@ const processarArquivo = (arqSelecionado) => {
 
     // Quando o arquivo for completamente lido, processa e ordena os dados
     arquivo.on('close', () => {
-        // Ordena os dados conforme o campo "ordem"
-        dadosJson.sort((a, b) => a.ordem - b.ordem);
+        if (dadosJson.length === 0) {
+            console.log(`Nenhum dado encontrado para o "arq" ${arqSelecionado}.`);
+        } else {
+            // Ordena os dados conforme o campo "ordem"
+            dadosJson.sort((a, b) => a.ordem - b.ordem);
 
-        // Extrai as notas ordenadas
-        const notasOrdenadas = dadosJson.map(obj => obj.notas);
+            // Extrai as notas ordenadas
+            const notasOrdenadas = dadosJson.map(obj => obj.notas);
 
-        // Define o nome do arquivo de saída
-        const nomeArquivoSaida = `notasOrdenadas_${arqSelecionado}.txt`;
+            // Define o nome do arquivo de saída
+            const nomeArquivoSaida = `notasOrdenadas_${arqSelecionado}.txt`;
 
-        // Salva as notas ordenadas no arquivo
-        fs.writeFile(nomeArquivoSaida, notasOrdenadas.join('\n'), (err) => {
-            if (err) {
-                console.error('Erro ao salvar o arquivo:', err);
-            } else {
-                console.log(`Notas ordenadas para o arq ${arqSelecionado} salvas em ${nomeArquivoSaida}`);
-            }
-        });
+            // Salva as notas ordenadas no arquivo
+            fs.writeFile(nomeArquivoSaida, notasOrdenadas.join('\n'), (err) => {
+                if (err) {
+                    console.error('Erro ao salvar o arquivo:', err);
+                } else {
+                    console.log(`Notas ordenadas para o arq ${arqSelecionado} salvas em ${nomeArquivoSaida}`);
+                }
+            });
+        }
+        // Fecha a interface de entrada após processar
+        rl.close();
     });
 };
 
@@ -66,8 +72,5 @@ rl.question('Digite o valor de "arq" que deseja ordenar: ', (arqSelecionado) => 
     } else {
         // Inicia o processamento do arquivo com o "arq" selecionado
         processarArquivo(arqSelecionado);
-
-        // Fecha a interface de entrada após processar
-        rl.close();
     }
 });
