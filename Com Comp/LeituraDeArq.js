@@ -33,4 +33,8 @@ arquivo.on('line', (linha) => {
 // Evento que ocorre quando o arquivo foi totalmente lido
 arquivo.on('close', () => {
     console.log('Leitura do arquivo concluída.');
+    
+    // Converte o conjunto em um array, ordena os números em ordem crescente e exibe
+    const arqsOrdenados = Array.from(arqsEncontrados).sort((a, b) => a - b);
+    console.log('Valores de "arq" em ordem crescente:', arqsOrdenados);
 });
