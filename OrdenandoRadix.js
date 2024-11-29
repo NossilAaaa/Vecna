@@ -8,6 +8,9 @@ const dadosJson = [];
 const arquivo = fs.createReadStream('Song1JSONvector.txt');
 const jsonParser = parser();
 
+console.log("Iniciando o processamento...");
+const startTime = Date.now(); // Marca o tempo inicial
+
 arquivo
     .pipe(jsonParser)
     .pipe(streamArray())
@@ -15,7 +18,9 @@ arquivo
         dadosJson.push(value); // Armazena cada elemento no array
     })
     .on('end', () => {
-        // Função para encontrar o maior valor (evita Math.max com spread)
+        console.log("Arquivo lido e dados processados.");
+
+        // Função para encontrar o maior valor
         const findMax = (array, key) => {
             let max = 0;
             for (const obj of array) {
@@ -57,5 +62,10 @@ arquivo
             } else {
                 console.log('Arquivo salvo com sucesso: OrdenadasJson.txt');
             }
+
+            // Marca o tempo final e calcula o total
+            const endTime = Date.now();
+            const totalTime = (endTime - startTime) / 1000; // Em segundos
+            console.log(`Tempo total de execução: ${totalTime.toFixed(2)} segundos.`);
         });
     });
